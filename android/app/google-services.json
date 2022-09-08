@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1074735424483",
+    "firebase_url": "https://hamr-mobile.firebaseio.com",
+    "project_id": "hamr-mobile",
+    "storage_bucket": "hamr-mobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074735424483:android:73d905ec6b6d3845a736d6",
+        "android_client_info": {
+          "package_name": "com.hamr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1074735424483-849k4qupkn9189jmp5dvk590dcvuusll.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkbcoo8hym0vWPpZRepBdbTVQ-BBWb9Zo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1074735424483-849k4qupkn9189jmp5dvk590dcvuusll.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,9 @@
+{
+    "hamr": "HAMR",
+    "login": "LOGIN_FR",
+    "username": "Username_FR",
+    "password": "Password_FR",
+	"remember_me": "Remember me_FR",
+	"username_wrong": "Wrong username, please try again",
+	"password_wrong": "Wrong password, please try again"
+}
