@@ -93,7 +93,8 @@ class ShelfLabel {
             mfgNum: item.MfgNum,
             description: item.Description,
             skuNum: item.SkuNum.toString(),
-            retailPrice: price.toString(),
+           // retailPrice: price.toString(), doesn't print 0 for prices ending in 0
+            retailPrice: price.toFixed(2),
             retailUnit: item.RetailUnit.toString(),
             override: override,
             upc: upc

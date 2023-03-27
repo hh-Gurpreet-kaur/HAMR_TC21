@@ -86,9 +86,6 @@ class Sync extends React.Component {
         Settings.saveLastSync();
       });
     }
-    this.setState({
-      lastSync: Settings.lastSync,
-    });
   }
 
   //added NavigationEvents to render, to reload screen
@@ -400,6 +397,9 @@ class Sync extends React.Component {
         syncText: translate("sync_complete"),
       });
       Settings.saveLastSync();
+      this.setState({
+        lastSync: Settings.lastSync,
+      });
       Logging.log("File sync complete.\n");
     } else {
       this.toggleSync();

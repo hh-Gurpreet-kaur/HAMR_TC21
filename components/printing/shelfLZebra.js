@@ -51,7 +51,7 @@ class ShelfLabelZebra {
             mfgNum: item.MfgNum,
             description: item.Description,
             skuNum: item.SkuNum.toString(),
-            retailPrice: price.toString(),
+            retailPrice: price.toFixed(2),
             retailUnit: item.RetailUnit.toString(),
             override: override,
             upc: upc

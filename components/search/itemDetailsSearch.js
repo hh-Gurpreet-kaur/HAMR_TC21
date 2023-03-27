@@ -585,7 +585,7 @@ renderOrderBtn() {
         const tmpScn = scan.substring(1)
         if (tmpScn.length >= 11) {
           const upc = await Scanning.checkHomeUpc(tmpScn)
-          if (upc.length == 7) {
+          if (upc.length <= 7) {
             this.findBySku(upc)
           } else {
             this.findByUpc(upc)
@@ -599,7 +599,7 @@ renderOrderBtn() {
         if (scan.length >= 11) {
           const upc = await Scanning.checkHomeUpc(scan)
 
-          if (upc.length == 7) {
+          if (upc.length <= 7) {
             this.findBySku(upc)
           } else {
             this.findByUpc(upc)
@@ -623,7 +623,7 @@ renderOrderBtn() {
 
       const upc = await Scanning.checkHomeUpc(cleanedScan)
 
-      if (upc.length == 7) {
+      if (upc.length <= 7) {
         this.handleItem(upc, true)
       } else if (upc.length > 11) {
         if (this.state.previousScan == upc) {
@@ -644,7 +644,7 @@ renderOrderBtn() {
           this.findByUpc(upc)
         }
       }
-    } else if (scan.length == 7 || scan.length >= 11) {
+    } else if (scan.length <= 7 || scan.length >= 11) {
       this.handleItem(scan, false)
     } else if (scan.length == 0) {
       this.setState({

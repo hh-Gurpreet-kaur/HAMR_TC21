@@ -917,8 +917,8 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    marginBottom: 5
-   // marginTop: 102
+    marginBottom: 1,
+    marginTop: 102
   },
   btn: {
     padding: 5,
