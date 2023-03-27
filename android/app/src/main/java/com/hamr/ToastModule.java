@@ -65,7 +65,11 @@ public class ToastModule extends ReactContextBaseJavaModule {
 		while ( (quote = s.indexOf("\'")) != -1 ) {
 			s = s.substring(0, quote) + s.substring(quote+1);
 		}
-
+       
+		/* int questionmark;
+		while ( (quote = s.indexOf("?")) != -1 ) {
+			s = s.substring(0, questionmark) + s.substring(questionmark+1);
+		} */
 		// string check
 		if( !s.matches("[0-9]+") ) {
 			s = new String("\'" + s + "\'");
@@ -88,8 +92,6 @@ public class ToastModule extends ReactContextBaseJavaModule {
 	private static String singleRepeatUpdate(String update, String repeatLine) {
 		int bCount = symbolCount(update, "?");
 
-
-
 		// split repeatLine values
 		ArrayList<String> val = new ArrayList<>();
 		int found;
@@ -102,9 +104,6 @@ public class ToastModule extends ReactContextBaseJavaModule {
 		}
 		// last does not have '|'
 		val.add(repeatLine);
-
-
-
 		int index = 0;
 		for (int i=0; i<val.size(); ++i) {
 			// get index of next ?
@@ -239,6 +238,8 @@ public class ToastModule extends ReactContextBaseJavaModule {
 			StringBuilder batchString = new StringBuilder("INSERT INTO KEYWORDS VALUES ");
 
 			while( (s = r.readLine()) != null) {
+				if ( s.trim().length() == 0)
+				continue;
 				String[] arr = s.split("\\|");
 
 				batchString.append("(" + arr[0] + ", " + cleanRepeatValue(arr[1].trim()) + "), ");
@@ -278,6 +279,9 @@ public class ToastModule extends ReactContextBaseJavaModule {
 
 				// line by line read
 				while ((line = br.readLine()) != null) {
+					if ( line.trim().length() == 0)
+					continue;
+					
 					// handle COMMENT
 					boolean isComment = line.startsWith("--");
 					if(isComment) {
@@ -285,7 +289,13 @@ public class ToastModule extends ReactContextBaseJavaModule {
 						Hamr.Logging.log(line);
 						continue;
 					}
-
+					boolean isEmpty = line.isEmpty();
+					if(isEmpty) {
+						Log.e("NativeData" ,line+"\n");
+						Hamr.Logging.log(line);
+						continue;
+					}
+					if (line.isEmpty()) continue;
 					// handle CREATE
 					boolean isCreate = line.startsWith("CREATE");
 					if (isCreate) {
@@ -309,6 +319,8 @@ public class ToastModule extends ReactContextBaseJavaModule {
 						// read another line to make sure REPEAT
 						String s;
 						s = br.readLine();
+						if ( s.trim().length() == 0)
+						continue;
 
 						// check for repeat
 						boolean isRepeat = s.startsWith("REPEAT");
@@ -329,6 +341,8 @@ public class ToastModule extends ReactContextBaseJavaModule {
 							repeatBuffer.append(insCmd + " VALUES");
 
 							while((s = br.readLine()) != null) {
+								if ( s.trim().length() == 0)
+								continue;
 								++repCount;
 
 								// not adding first or last line
@@ -435,6 +449,8 @@ public class ToastModule extends ReactContextBaseJavaModule {
 
 						// check next line for REPEAT
 						String s = br.readLine();
+						if ( s.trim().length() == 0)
+						continue;
 						boolean isRepeat = s.startsWith("REPEAT");
 
 						if (isRepeat) {
@@ -444,6 +460,8 @@ public class ToastModule extends ReactContextBaseJavaModule {
 
 							int lineCount = 0;
 							while ( (s=br.readLine()) != null ) {
+								if ( line.trim().length() == 0)
+								continue;
 								++lineCount;
 
 								// skip first line
@@ -508,7 +526,8 @@ public class ToastModule extends ReactContextBaseJavaModule {
 				Hamr.Logging.error("Something went wrong. Stopping DB creation.", e.getMessage());
 				Log.e("NativeData", "\n\n\t THREW \n\n." + e.getMessage()+ "\n\n");
 
-				promise.resolve(false);
+				promise.resolve(true);
+				continue;
 			}
 
 			Log.e("NativeData", "file #" + fileList[index].toString() + " done!");
@@ -520,7 +539,7 @@ public class ToastModule extends ReactContextBaseJavaModule {
 		p("Total Elapsed Time: " + totalElapsed + " ms");
 		Hamr.Logging.log("Finished DB Creation. Total Elapsed Time: " + totalElapsed + "ms");
 
-		promise.resolve(true);
+		promise.resolve(false);
 	}
 
 	private void getStoreNum() {
@@ -534,6 +553,8 @@ public class ToastModule extends ReactContextBaseJavaModule {
 			db = SQLiteDatabase.openOrCreateDatabase(dbPath, null);
 
 			while( (line = reader.readLine()) != null) {
+				if ( line.trim().length() == 0)
+				continue;
 
 				if (line.toLowerCase().startsWith("storenum=")) {
 					String storeNum = line.substring(line.indexOf('=') + 1);

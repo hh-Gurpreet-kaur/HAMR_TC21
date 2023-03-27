@@ -133,8 +133,8 @@ android {
         applicationId "com.hamr"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 23
-        versionName "1.0.23"
+        versionCode 1120
+        versionName "1.1.2.0 "
         multiDexEnabled true 
     }
     splits {
@@ -197,7 +197,11 @@ android {
         pickFirst '**/x86_64/libc++_shared.so'
         pickFirst '**/x86/libjsc.so'
         pickFirst '**/armeabi-v7a/libjsc.so'
+         pickFirst "**/libhermes.so"
     }
+
+    
+
 }
 
 
@@ -205,10 +209,13 @@ android {
 dependencies {
     implementation 'eu.agno3.jcifs:jcifs-ng:2.1.8'
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation ("com.facebook.react:react-native:0.60.5") { force = true }  // From node_modules
+    implementation ("com.facebook.react:react-native:+") { force = true }  // From node_modules
     //implementation "android.arch.lifecycle:extensions:1.0.0"
     implementation 'com.android.support:multidex:1.0.3'
     compile project(':react-native-bluetooth-serial')
+    implementation project(':react-native-safe-area-context')
+    implementation project(':@react-native-async-storage')
+    implementation project(':react-native-reanimated')
 
     if (enableHermes) {
       def hermesPath = "../../node_modules/hermesvm/android/";
@@ -230,3 +237,7 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 apply plugin: 'com.google.gms.google-services'
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+/* apply plugin: "org.sonarqube"
+apply from: "sonar.gradle" */
+

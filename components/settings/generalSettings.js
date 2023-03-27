@@ -7,8 +7,7 @@ import {
 	Button,
 	TouchableOpacity,
 	ScrollView,
-	Picker,
-	BackHandler
+	Picker
 } from 'react-native'
 
 import {Item} from '../mainPage/home'
@@ -28,6 +27,7 @@ import RowInput from '../~handMade/rowInput'
 import sqldb from '../misc/database';
 import color from '../../styles/colors'
 import Settings from './settings'
+import {version} from '../../package.json';
 let db
 
 
@@ -70,6 +70,7 @@ class GeneralSettings extends React.Component {
 			timeout: Settings.timeout,
 			lastSync: Settings.lastSync,
 			integrated: "No",
+			version: "",
 			showNumpad: Settings.showNumpad,
 			storeNum: ""
 		}
@@ -258,6 +259,10 @@ class GeneralSettings extends React.Component {
 						<Text style={style.subtitle}> {translate("integrated")}  </Text>
 						<Text style={[{fontWeight: 'bold', fontSize: 16}]}> {this.state.integrated} </Text>
 					</View>
+					 <View style={style.row}>
+						<Text style={style.subtitle}> {translate("version")}  </Text>
+						<Text style={[{fontWeight: 'bold', fontSize: 16}]}> {version} </Text>
+					</View> 
 					<View style={style.row}>
 						<Text style={style.subtitle}> {translate("last_connected")}  </Text>
 						<Text style={[{fontWeight: 'bold', fontSize: 16}]}> {Settings.lastSync} </Text>
@@ -508,4 +513,4 @@ const style = StyleSheet.create({
 })
 
 
-export default addHeader(GeneralSettings, 'Settings')
+export default addHeader(GeneralSettings, 'settings')

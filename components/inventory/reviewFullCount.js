@@ -1,15 +1,15 @@
 import React from 'react'
 import {
-	View,
-	Text,
-	ScrollView,
-	StyleSheet,
-	TextInput,
-	TouchableNativeFeedback,
-	Image
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableNativeFeedback,
+  Image
 } from 'react-native'
 
-import {Item} from '../mainPage/home'
+import { Item } from '../mainPage/home'
 
 import FourTable from '../~handMade/fourTable'
 import { translate } from '../../translations/langHelpers'
@@ -17,45 +17,46 @@ import DeleteModal from '../~handMade/deleteModal'
 
 import addHeader from '../../hoc/addHeader'
 
-import sqldb from '../misc/database';
+import sqldb from '../misc/database'
 import color from '../../styles/colors'
 
 class ReviewFullCount extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      tableHead: [
+        translate('item_no'),
+        translate('qty'),
+        translate('cost'),
+        translate('description')
+      ],
+      tableData: [],
+      cost: '$0.00',
+      lines: '0',
+      selected: null,
+      isDeleteModalVisible: false
+    }
 
+    this.deleteColor = color.delete_line
+  }
 
-	constructor(props) {
-		super(props)
-		this.state = {
-			tableHead: [
-				translate("item_no"),
-				translate("qty"),
-				translate("cost"),
-				translate("description")
-			],
-			tableData: [],
-			cost: '$0.00',
-			lines: '0',
-			selected: null,
-			isDeleteModalVisible: false
-		}
+  componentDidMount () {
+    this.focusListener = this.props.navigation.addListener(
+      'didFocus',
+      this.start
+    )
+  }
 
-		this.deleteColor = color.delete_line
-	}
+  componentWillUnmount () {
+    this.focusListener.remove()
+  }
 
-	componentDidMount() {
-		this.focusListener = this.props.navigation.addListener("didFocus", this.start);
-	}
+  start = () => {
+    this.getResults()
+  }
 
-	componentWillUnmount() {
-		this.focusListener.remove();
-	}
-
-	start = () => {
-		this.getResults()
-	}
-
-	getResults = () => {
-		let q = `SELECT [InventoryCount].InventoryCountID as Id, [InventoryCount].SkuNum as SkuNum, 
+  getResults = () => {
+    const q = `SELECT [InventoryCount].InventoryCountID as Id, [InventoryCount].SkuNum as SkuNum, 
 		[InventoryCount].Qty as Qty, [ItemSupplier].AcctCost as AcctCost, 
 		[ItemMaster].Description as Description FROM [InventoryCount] 
 			LEFT JOIN [ItemMaster] ON [ItemMaster].SkuNum = [InventoryCount].SkuNum 
@@ -63,304 +64,313 @@ class ReviewFullCount extends React.Component {
 			WHERE [InventoryCount].SkuNum IS NOT NULL 
 			AND [InventoryCount].Tag IS NOT NULL AND [InventoryCount].Location IS NULL
 			UNION
-			SELECT InventoryCountID, UpcCode, Qty, '', ifnull(Description, '${translate('not_on_file')}') FROM InventoryCount
+			SELECT InventoryCountID, UpcCode, Qty, '', ifnull(Description, '${translate(
+        'not_on_file'
+      )}') FROM InventoryCount
 			WHERE SkuNum IS NULL
 			AND [InventoryCount].Tag IS NOT NULL AND [InventoryCount].Location IS NULL`
 
-		// clean command
-		let del = `DELETE FROM [InventoryCount]`
-		
-		sqldb.executeReader(q).then((results) => {
-			if (results.length == 0) {
-				console.log('inventory count table empty?')
-			} else {
-				try{
-					this.parseResults(results)
-				} catch (e) {
-					console.log(e);
-				}
-			}
-		})
-	}
+    // clean command
+    const del = 'DELETE FROM [InventoryCount]'
 
-	parseResults = (results) => {
-		// retrieve all the rows
-		let data = []
-		let len = results.length
+    sqldb.executeReader(q).then((results) => {
+      if (results.length == 0) {
+        console.log('inventory count table empty?')
+      } else {
+        try {
+          this.parseResults(results)
+        } catch (e) {
+          console.log(e)
+        }
+      }
+    })
+  }
 
-		for (var i=0; i<len; ++i) {
-			let x = results.item(i)
-			let cost = x.AcctCost ? x.AcctCost.toFixed(2) : ""
-			let inventory = {
-				id: x.Id,
-				key: x.SkuNum.toString(),
-				item: x.Qty,
-				boh: cost,
-				descr: x.Description,
-				back: i % 2 == 0 ? color.grey : 'white'
-			}
-			data.push(inventory)
-		}
+  parseResults = (results) => {
+    // retrieve all the rows
+    const data = []
+    const len = results.length
 
-		// update all the rows to render
-		this.setState({
-			tableData : data
-		})
+    for (let i = 0; i < len; ++i) {
+      const x = results.item(i)
+      const cost = x.AcctCost ? x.AcctCost.toFixed(2) : ''
+      const inventory = {
+        id: x.Id,
+        key: x.SkuNum.toString(),
+        item: x.Qty,
+        boh: cost,
+        descr: x.Description,
+        back: i % 2 == 0 ? color.grey : 'white'
+      }
+      data.push(inventory)
+    }
 
-		this.updateStatus()
-	}
+    // update all the rows to render
+    this.setState({
+      tableData: data
+    })
 
-	selectRow = (data) => {
-		let ans = []
-		let len = this.state.tableData.length
+    this.updateStatus()
+  }
 
-		for (var i=0; i<len; ++i) {
-			let x = this.state.tableData[i]
+  selectRow = (data) => {
+    const ans = []
+    const len = this.state.tableData.length
 
-			let back = i % 2 == 0 ? color.grey : 'white'
+    for (let i = 0; i < len; ++i) {
+      const x = this.state.tableData[i]
 
-			if (i == data.index) {
-				back = this.deleteColor
-				selected = i;
-			}
+      let back = i % 2 == 0 ? color.grey : 'white'
 
-			ans.push({
-				id: x.id,
-				key : x.key,
-				boh: x.boh,
-				descr: x.descr,
-				item: x.item,
-				back : back,
-			})
-		}
+      if (i == data.index) {
+        back = this.deleteColor
+        selected = i
+      }
 
-		this.setState({
-			tableData: ans,
-			selected, selected
-		})
-	}
+      ans.push({
+        id: x.id,
+        key: x.key,
+        boh: x.boh,
+        descr: x.descr,
+        item: x.item,
+        back
+      })
+    }
 
-	tryDelete = () => {
-		if (this.state.selected != null) {
-			this.toggleDeleteModal();
-		}
-	}
+    this.setState({
+      tableData: ans,
+      selected,
+      selected
+    })
+  }
 
-	deleteLine = () => {
-		this.toggleDeleteModal();
-		let len = this.state.tableData.length
-		let ans = []
-		console.log(this.state.tableData);
-		for (var i=0; i<len; ++i) {
-			let x = this.state.tableData[i]
+  tryDelete = () => {
+    if (this.state.selected != null) {
+      this.toggleDeleteModal()
+    }
+  }
 
-			if (x.back != color.delete_line) {
-				ans.push(x)
-			} else {
-				let query = `
+  deleteLine = () => {
+    this.toggleDeleteModal()
+    const len = this.state.tableData.length
+    const ans = []
+    console.log(this.state.tableData)
+    for (let i = 0; i < len; ++i) {
+      const x = this.state.tableData[i]
+
+      if (x.back != color.delete_line) {
+        ans.push(x)
+      } else {
+        const query = `
 				DELETE FROM [InventoryCount]
 				WHERE InventoryCountID = ${x.id}
 				`
-				sqldb.executeQuery(query);
-			}
-		}
+        sqldb.executeQuery(query)
+      }
+    }
 
-		this.state.tableData = ans;
-		this.state.selected = null;
+    this.state.tableData = ans
+    this.state.selected = null
 
-		this.updateStatus();
-	}
+    this.updateStatus()
+  }
 
-	updateStatus = () => {
-		let cost = 0
-		let len = this.state.tableData.length
+  updateStatus = () => {
+    let cost = 0
+    const len = this.state.tableData.length
 
-		for (var i=0; i<len; ++i) {
-			let x = this.state.tableData[i]
+    for (let i = 0; i < len; ++i) {
+      const x = this.state.tableData[i]
 
-			cost += x.boh * x.item
-		}
+      cost += x.boh * x.item
+    }
 
-		this.setState({
-			cost: '$' + cost.toFixed(2),
-			lines: len,
-		})
+    this.setState({
+      cost: '$' + cost.toFixed(2),
+      lines: len
+    })
+  }
 
-	}
+  getCountPage (page) {
+    let pageCaption = ''
+    switch (page) {
+      case 'fullCount':
+        pageCaption = translate('full_count_tab')
+        break
+      case 'cycleCount':
+        pageCaption = translate('cycle_count_tab')
+        break
+      case 'spotCheck':
+        pageCaption = translate('spot_check_tab')
+        break
+      default:
+        pageCaption = translate('full_count_tab')
+    }
 
-	getCountPage(page) {
-		let pageCaption = "";
-		switch (page) {
-			case "fullCount": 
-				pageCaption = translate('full_count_tab');
-				break;
-			case "cycleCount": 
-				pageCaption = translate('cycle_count_tab');
-				break;
-			case "spotCheck": 
-				pageCaption = translate('spot_check_tab');
-				break;
-			default:
-				pageCaption = translate('full_count_tab');
-		}
+    return pageCaption
+  }
 
-		return pageCaption;
-	}
+  toggleDeleteModal = () => {
+    this.setState({
+      isDeleteModalVisible: !this.state.isDeleteModalVisible
+    })
+  }
 
-	toggleDeleteModal = () => {
-		this.setState({ 
-			isDeleteModalVisible: !this.state.isDeleteModalVisible,
-		 });
-	}
+  render () {
+    const pageCaption = translate('full_count_tab')
 
-	render() {
-		let pageCaption = translate('full_count_tab');
+    return (
+      <View style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
+          <View style={style.stats}>
+            <View>
+              {global.canSeeCost && (
+                <Text style={S.title}> {translate('cost')}: </Text>
+              )}
+              <Text style={S.title}> {translate('num_lines')}: </Text>
+            </View>
+            <View>
+              {global.canSeeCost && (
+                <Text style={[S.value, { color: color.light_green }]}>
+                  {' '}
+                  {this.state.cost}{' '}
+                </Text>
+              )}
+              <Text style={S.value}> {this.state.lines} </Text>
+            </View>
+          </View>
 
-		return (
-		<View style={{flex: 1}}>
-			<View style={{flex: 1}}>
+          <FourTable
+            tableData={this.state.tableData}
+            tableHead={this.state.tableHead}
+            rowPress={this.selectRow}
+            costVisible={global.canSeeCost}
+          />
+        </View>
+        <View style={[style.orderPrintPanel]}>
+          <TouchableNativeFeedback
+            background={TouchableNativeFeedback.Ripple(color.btn_selected)}
+            onPress={() => this.props.navigation.goBack()}
+          >
+            <View style={style.btn}>
+              <Text style={style.btnText}>{pageCaption}</Text>
+            </View>
+          </TouchableNativeFeedback>
 
-				<View style={style.stats}>
-					<View>
-						{ global.canSeeCost &&
-							<Text style={S.title}> {translate("cost")}: </Text>
-						}
-						<Text style={S.title}> {translate("num_lines")}: </Text>
-					</View>
-					<View>
-						{ global.canSeeCost &&
-							<Text style={[S.value, {color: color.light_green}]}> {this.state.cost} </Text>
-						}
-						<Text style={S.value}> {this.state.lines} </Text>
-					</View>
-				</View>
-
-				<FourTable
-					tableData={this.state.tableData}
-					tableHead={this.state.tableHead} 
-					rowPress={this.selectRow}
-					costVisible={global.canSeeCost}/>
-
-			</View>
-			<View style={[style.orderPrintPanel]}>
-				<TouchableNativeFeedback 
-				 background={TouchableNativeFeedback.Ripple(color.btn_selected)}
-				 onPress={() => this.props.navigation.goBack()}>
-					<View style={style.btn}>
-						<Text style={style.btnText}>{ pageCaption }</Text>
-					</View>
-				</TouchableNativeFeedback>
-
-				<TouchableNativeFeedback 
-				 background={TouchableNativeFeedback.Ripple(color.btn_selected)}>
-				 	<View style={[style.btn, style.btnSelected]}>
-						<Text style={style.btnText}>{translate('review_inventory_tab')}</Text>
-					</View>
-				</TouchableNativeFeedback>
-				<TouchableNativeFeedback 
-					background={TouchableNativeFeedback.Ripple(color.btn_selected)}
-					onPress={this.tryDelete}>
-					<View style={style.btn}>
-						<Text style={style.btnText}> {translate("delete_line_tab_caps")} </Text>
-					</View>
-				</TouchableNativeFeedback>
-			</View>
-			<DeleteModal
-				onDeleteRow={this.deleteLine}
-				prompt={translate('delete_count_prompt')}
-				visible={this.state.isDeleteModalVisible}
-				onHide={this.toggleDeleteModal}
-			/>
-			<TextInput 
-				style={{ width: 0, height: 0, padding: 0, margin: 0 }}
-				showSoftInputOnFocus={false}
-				autoFocus={true}
-			/>
-		</View>
-		)
-	}
+          <TouchableNativeFeedback
+            background={TouchableNativeFeedback.Ripple(color.btn_selected)}
+          >
+            <View style={[style.btn, style.btnSelected]}>
+              <Text style={style.btnText}>
+                {translate('review_inventory_tab')}
+              </Text>
+            </View>
+          </TouchableNativeFeedback>
+          <TouchableNativeFeedback
+            background={TouchableNativeFeedback.Ripple(color.btn_selected)}
+            onPress={this.tryDelete}
+          >
+            <View style={style.btn}>
+              <Text style={style.btnText}>
+                {' '}
+                {translate('delete_line_tab_caps')}{' '}
+              </Text>
+            </View>
+          </TouchableNativeFeedback>
+        </View>
+        <DeleteModal
+          onDeleteRow={this.deleteLine}
+          prompt={translate('delete_count_prompt')}
+          visible={this.state.isDeleteModalVisible}
+          onHide={this.toggleDeleteModal}
+        />
+        <TextInput
+          style={{ width: 0, height: 0, padding: 0, margin: 0 }}
+          showSoftInputOnFocus={false}
+          autoFocus={true}
+        />
+      </View>
+    )
+  }
 }
 
 const style = StyleSheet.create({
-	stats: {
-		backgroundColor: color.grey,
-		justifyContent: 'center',
-		padding: 5,
-		flexDirection: "row",
-		justifyContent: "space-between"
-	},
-	orderPrintPanel: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: "center",
-		width: "100%",
-		marginTop: 2,
-	},
-	btn: {
-		padding: 5,
-		alignItems: 'center',
-		borderColor: 'black',
-		borderWidth: 1,
-		backgroundColor: 'white',
-		justifyContent: 'center',
-		backgroundColor: color.btn_unselected,
-		height: 50,
-		borderRadius: 5,
-		width: "33%"
-	},
-	btnText: {
-		fontSize: 16,
-		color: 'black',
-		textAlign: 'center'
-	},
-	btnSelected: {
-		backgroundColor: color.btn_selected
-	},
-});
-
-const S = StyleSheet.create({
-	box: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		padding: 3,
-		marginLeft: "5%",
-		marginRight: "5%",
-
-	},
-	title: {
-		fontSize: 18,
-		color: 'black'
-	},
-	value: {
-		fontSize: 18,
-	}
+  stats: {
+    backgroundColor: color.grey,
+    justifyContent: 'center',
+    padding: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  orderPrintPanel: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 2
+  },
+  btn: {
+    padding: 5,
+    alignItems: 'center',
+    borderColor: 'black',
+    borderWidth: 1,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    backgroundColor: color.btn_unselected,
+    height: 50,
+    borderRadius: 5,
+    width: '33%'
+  },
+  btnText: {
+    fontSize: 16,
+    color: 'black',
+    textAlign: 'center'
+  },
+  btnSelected: {
+    backgroundColor: color.btn_selected
+  }
 })
 
-function Statistic(props) {
-	const style = StyleSheet.create({
-		
-		box: {
-			flexDirection: 'row',
-			justifyContent: 'space-between',
-			padding: 3,
-			marginLeft: "5%",
-			marginRight: "5%",
+const S = StyleSheet.create({
+  box: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 3,
+    marginLeft: '5%',
+    marginRight: '5%'
+  },
+  title: {
+    fontSize: 18,
+    color: 'black'
+  },
+  value: {
+    fontSize: 18
+  }
+})
 
-		},
-		title: {
-			fontSize: 20,
-			color: 'black'
-		},
-		value: {
-			fontSize: 22
-		}
-	})
-	return(
-		<View style = {style.box}>
-			<Text style={style.title}> {props.title} </Text>
-			<Text style={style.value}> {props.value} </Text>
-		</View>
-	)
+function Statistic (props) {
+  const style = StyleSheet.create({
+    box: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      padding: 3,
+      marginLeft: '5%',
+      marginRight: '5%'
+    },
+    title: {
+      fontSize: 20,
+      color: 'black'
+    },
+    value: {
+      fontSize: 22
+    }
+  })
+  return (
+    <View style={style.box}>
+      <Text style={style.title}> {props.title} </Text>
+      <Text style={style.value}> {props.value} </Text>
+    </View>
+  )
 }
 
-export default addHeader(ReviewFullCount, 'Inventory')
+export default addHeader(ReviewFullCount, 'inventory')

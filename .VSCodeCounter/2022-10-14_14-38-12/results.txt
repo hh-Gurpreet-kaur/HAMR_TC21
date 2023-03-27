@@ -1,0 +1,174 @@
+Date : 2022-10-14 14:38:12
+Directory : c:\HAMRANDROID\hamr-android\hamr
+Total : 103 files,  37718 codes, 940 comments, 2763 blanks, all 41421 lines
+
+Languages
++-----------------+------------+------------+------------+------------+------------+
+| language        | files      | code       | comment    | blank      | total      |
++-----------------+------------+------------+------------+------------+------------+
+| JSON            |          9 |     23,270 |          0 |         55 |     23,325 |
+| JavaScript      |         66 |     12,796 |        615 |      2,172 |     15,583 |
+| Java            |          7 |      1,146 |        156 |        399 |      1,701 |
+| Groovy          |          3 |        161 |        119 |         32 |        312 |
+| XML             |          5 |         88 |          2 |         13 |        103 |
+| Batch           |          2 |         79 |          0 |         25 |        104 |
+| Objective-C     |          3 |         78 |         18 |         29 |        125 |
+| Ini             |          1 |         69 |         10 |         21 |        100 |
+| Java Properties |          3 |         17 |         14 |          8 |         39 |
+| PowerShell      |          3 |          9 |          0 |          4 |         13 |
+| C               |          1 |          5 |          6 |          5 |         16 |
++-----------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                        | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                           |        103 |     37,718 |        940 |      2,763 |     41,421 |
+| __tests__                                                                                   |          1 |          7 |          4 |          4 |         15 |
+| analytics                                                                                   |          1 |         19 |          0 |          8 |         27 |
+| android                                                                                     |         19 |      1,486 |        291 |        476 |      2,253 |
+| android\app                                                                                 |         13 |      1,337 |        269 |        436 |      2,042 |
+| android\app\src                                                                             |         11 |      1,192 |        158 |        411 |      1,761 |
+| android\app\src\debug                                                                       |          1 |          6 |          0 |          3 |          9 |
+| android\app\src\main                                                                        |         10 |      1,186 |        158 |        408 |      1,752 |
+| android\app\src\main\java                                                                   |          7 |      1,146 |        156 |        399 |      1,701 |
+| android\app\src\main\java\com                                                               |          7 |      1,146 |        156 |        399 |      1,701 |
+| android\app\src\main\java\com\hamr                                                          |          7 |      1,146 |        156 |        399 |      1,701 |
+| android\app\src\main\res                                                                    |          2 |          8 |          2 |          4 |         14 |
+| android\app\src\main\res\values                                                             |          2 |          8 |          2 |          4 |         14 |
+| android\gradle                                                                              |          1 |          5 |          0 |          1 |          6 |
+| android\gradle\wrapper                                                                      |          1 |          5 |          0 |          1 |          6 |
+| android\keystores                                                                           |          1 |          4 |          0 |          1 |          5 |
+| components                                                                                  |         52 |     11,848 |        550 |      2,054 |     14,452 |
+| components\auth                                                                             |          4 |        592 |         39 |         91 |        722 |
+| components\inventory                                                                        |          9 |      2,371 |         26 |        393 |      2,790 |
+| components\mainPage                                                                         |          1 |        275 |         10 |         42 |        327 |
+| components\marketOrder                                                                      |          5 |      1,748 |         42 |        293 |      2,083 |
+| components\misc                                                                             |          8 |        759 |         72 |        178 |      1,009 |
+| components\printing                                                                         |          5 |        425 |        124 |        112 |        661 |
+| components\search                                                                           |          5 |      3,253 |        175 |        538 |      3,966 |
+| components\settings                                                                         |          4 |        974 |         24 |        170 |      1,168 |
+| components\sync                                                                             |          1 |        587 |         19 |         81 |        687 |
+| components\~handMade                                                                        |         10 |        864 |         19 |        156 |      1,039 |
+| hoc                                                                                         |          1 |         74 |          2 |          8 |         84 |
+| ios                                                                                         |          7 |        169 |         24 |         36 |        229 |
+| ios\hamr                                                                                    |          6 |        122 |         18 |         20 |        160 |
+| ios\hamrTests                                                                               |          1 |         47 |          6 |         16 |         69 |
+| ios\hamr\Base.lproj                                                                         |          1 |         42 |          0 |          1 |         43 |
+| ios\hamr\Images.xcassets                                                                    |          2 |         44 |          0 |          1 |         45 |
+| ios\hamr\Images.xcassets\AppIcon.appiconset                                                 |          1 |         38 |          0 |          0 |         38 |
+| navigation                                                                                  |          1 |        319 |         25 |         61 |        405 |
+| scripts                                                                                     |          4 |         12 |          0 |          4 |         16 |
+| styles                                                                                      |          4 |        433 |         15 |         10 |        458 |
+| translations                                                                                |          3 |        497 |          4 |         57 |        558 |
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------+-----------------+------------+------------+------------+------------+
+| filename                                                                                    | language        | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------+-----------------+------------+------------+------------+------------+
+| c:\HAMRANDROID\hamr-android\hamr\.flowconfig                                                | Ini             |         69 |         10 |         21 |        100 |
+| c:\HAMRANDROID\hamr-android\hamr\.watchmanconfig                                            | JSON            |          1 |          0 |          0 |          1 |
+| c:\HAMRANDROID\hamr-android\hamr\App.js                                                     | JavaScript      |         40 |          5 |         14 |         59 |
+| c:\HAMRANDROID\hamr-android\hamr\__tests__\App-test.js                                      | JavaScript      |          7 |          4 |          4 |         15 |
+| c:\HAMRANDROID\hamr-android\hamr\analytics\ga.js                                            | JavaScript      |         19 |          0 |          8 |         27 |
+| c:\HAMRANDROID\hamr-android\hamr\android\app\build.gradle                                   | Groovy          |        105 |        111 |         25 |        241 |
+| c:\HAMRANDROID\hamr-android\hamr\android\app\google-services.json                           | JSON            |         40 |          0 |          0 |         40 |
+| c:\HAMRANDROID\hamr-android\hamr\android\app\src\debug\AndroidManifest.xml                  | XML             |          6 |          0 |          3 |          9 |
+| c:\HAMRANDROID\hamr-android\hamr\android\app\src\main\AndroidManifest.xml                   | XML             |         32 |          0 |          5 |         37 |
+| c:\HAMRANDROID\hamr-android\hamr\android\app\src\main\java\com\hamr\CustomToastPackage.java | Java            |         23 |          0 |          8 |         31 |
+| c:\HAMRANDROID\hamr-android\hamr\android\app\src\main\java\com\hamr\ExportModule.java       | Java            |        231 |         76 |         92 |        399 |
+| c:\HAMRANDROID\hamr-android\hamr\android\app\src\main\java\com\hamr\Hamr.java               | Java            |         70 |          0 |         22 |         92 |
+| c:\HAMRANDROID\hamr-android\hamr\android\app\src\main\java\com\hamr\MainActivity.java       | Java            |         34 |          6 |         14 |         54 |
+| c:\HAMRANDROID\hamr-android\hamr\android\app\src\main\java\com\hamr\MainApplication.java    | Java            |         75 |          9 |         15 |         99 |
+| c:\HAMRANDROID\hamr-android\hamr\android\app\src\main\java\com\hamr\SmbModule.java          | Java            |        336 |          5 |        101 |        442 |
+| c:\HAMRANDROID\hamr-android\hamr\android\app\src\main\java\com\hamr\ToastModule.java        | Java            |        377 |         60 |        147 |        584 |
+| c:\HAMRANDROID\hamr-android\hamr\android\app\src\main\res\values\strings.xml                | XML             |          3 |          0 |          1 |          4 |
+| c:\HAMRANDROID\hamr-android\hamr\android\app\src\main\res\values\styles.xml                 | XML             |          5 |          2 |          3 |         10 |
+| c:\HAMRANDROID\hamr-android\hamr\android\build.gradle                                       | Groovy          |         45 |          6 |          7 |         58 |
+| c:\HAMRANDROID\hamr-android\hamr\android\gradle.properties                                  | Java Properties |          8 |         14 |          6 |         28 |
+| c:\HAMRANDROID\hamr-android\hamr\android\gradle\wrapper\gradle-wrapper.properties           | Java Properties |          5 |          0 |          1 |          6 |
+| c:\HAMRANDROID\hamr-android\hamr\android\gradlew.bat                                        | Batch           |         76 |          0 |         25 |        101 |
+| c:\HAMRANDROID\hamr-android\hamr\android\keystores\debug.keystore.properties                | Java Properties |          4 |          0 |          1 |          5 |
+| c:\HAMRANDROID\hamr-android\hamr\android\settings.gradle                                    | Groovy          |         11 |          2 |          0 |         13 |
+| c:\HAMRANDROID\hamr-android\hamr\app.json                                                   | JSON            |          4 |          0 |          0 |          4 |
+| c:\HAMRANDROID\hamr-android\hamr\babel.config.js                                            | JavaScript      |          6 |          1 |          1 |          8 |
+| c:\HAMRANDROID\hamr-android\hamr\components\auth\firstTimeLogin.js                          | JavaScript      |        107 |          7 |         14 |        128 |
+| c:\HAMRANDROID\hamr-android\hamr\components\auth\loading.js                                 | JavaScript      |        109 |         12 |         14 |        135 |
+| c:\HAMRANDROID\hamr-android\hamr\components\auth\logout.js                                  | JavaScript      |         26 |          5 |          3 |         34 |
+| c:\HAMRANDROID\hamr-android\hamr\components\auth\userLogin.js                               | JavaScript      |        350 |         15 |         60 |        425 |
+| c:\HAMRANDROID\hamr-android\hamr\components\inventory\countComponent.js                     | JavaScript      |        578 |         10 |         78 |        666 |
+| c:\HAMRANDROID\hamr-android\hamr\components\inventory\cycleCount.js                         | JavaScript      |        284 |          2 |         55 |        341 |
+| c:\HAMRANDROID\hamr-android\hamr\components\inventory\fullCount.js                          | JavaScript      |        211 |          2 |         43 |        256 |
+| c:\HAMRANDROID\hamr-android\hamr\components\inventory\inventoryParent.js                    | JavaScript      |         22 |          1 |          4 |         27 |
+| c:\HAMRANDROID\hamr-android\hamr\components\inventory\inventoryRouter.js                    | JavaScript      |        153 |          1 |         26 |        180 |
+| c:\HAMRANDROID\hamr-android\hamr\components\inventory\reviewCycleCount.js                   | JavaScript      |        315 |          3 |         50 |        368 |
+| c:\HAMRANDROID\hamr-android\hamr\components\inventory\reviewFullCount.js                    | JavaScript      |        313 |          3 |         50 |        366 |
+| c:\HAMRANDROID\hamr-android\hamr\components\inventory\reviewSpotCheck.js                    | JavaScript      |        316 |          3 |         49 |        368 |
+| c:\HAMRANDROID\hamr-android\hamr\components\inventory\spotCheck.js                          | JavaScript      |        179 |          1 |         38 |        218 |
+| c:\HAMRANDROID\hamr-android\hamr\components\mainPage\home.js                                | JavaScript      |        275 |         10 |         42 |        327 |
+| c:\HAMRANDROID\hamr-android\hamr\components\marketOrder\itemDetails.js                      | JavaScript      |        652 |         19 |         96 |        767 |
+| c:\HAMRANDROID\hamr-android\hamr\components\marketOrder\marketOrder.js                      | JavaScript      |         43 |          0 |         12 |         55 |
+| c:\HAMRANDROID\hamr-android\hamr\components\marketOrder\orderInfo.js                        | JavaScript      |        208 |          1 |         24 |        233 |
+| c:\HAMRANDROID\hamr-android\hamr\components\marketOrder\orderReviewMarketOrder.js           | JavaScript      |        297 |          5 |         62 |        364 |
+| c:\HAMRANDROID\hamr-android\hamr\components\marketOrder\quickEntry.js                       | JavaScript      |        548 |         17 |         99 |        664 |
+| c:\HAMRANDROID\hamr-android\hamr\components\misc\Images.js                                  | JavaScript      |         45 |          0 |          8 |         53 |
+| c:\HAMRANDROID\hamr-android\hamr\components\misc\data.js                                    | JavaScript      |        228 |         62 |         86 |        376 |
+| c:\HAMRANDROID\hamr-android\hamr\components\misc\database.js                                | JavaScript      |         54 |          0 |         12 |         66 |
+| c:\HAMRANDROID\hamr-android\hamr\components\misc\editFactor.js                              | JavaScript      |         78 |          2 |         21 |        101 |
+| c:\HAMRANDROID\hamr-android\hamr\components\misc\itemStatus.js                              | JavaScript      |         11 |          1 |          4 |         16 |
+| c:\HAMRANDROID\hamr-android\hamr\components\misc\nativeData.js                              | JavaScript      |        272 |          5 |         29 |        306 |
+| c:\HAMRANDROID\hamr-android\hamr\components\misc\scanning.js                                | JavaScript      |         50 |          2 |         10 |         62 |
+| c:\HAMRANDROID\hamr-android\hamr\components\misc\sort.js                                    | JavaScript      |         21 |          0 |          8 |         29 |
+| c:\HAMRANDROID\hamr-android\hamr\components\printing\bluetooth.js                           | JavaScript      |         92 |          0 |         10 |        102 |
+| c:\HAMRANDROID\hamr-android\hamr\components\printing\labels.js                              | JavaScript      |         88 |          0 |         19 |        107 |
+| c:\HAMRANDROID\hamr-android\hamr\components\printing\printerConfig.js                       | JavaScript      |         63 |          0 |         13 |         76 |
+| c:\HAMRANDROID\hamr-android\hamr\components\printing\shelfLabel.js                          | JavaScript      |         99 |         67 |         38 |        204 |
+| c:\HAMRANDROID\hamr-android\hamr\components\printing\upcLabel.js                            | JavaScript      |         83 |         57 |         32 |        172 |
+| c:\HAMRANDROID\hamr-android\hamr\components\search\itemDetailsSearch.js                     | JavaScript      |        677 |         40 |        112 |        829 |
+| c:\HAMRANDROID\hamr-android\hamr\components\search\order.js                                 | JavaScript      |        893 |         22 |        148 |      1,063 |
+| c:\HAMRANDROID\hamr-android\hamr\components\search\search.js                                | JavaScript      |        854 |         72 |        140 |      1,066 |
+| c:\HAMRANDROID\hamr-android\hamr\components\search\searchResults.js                         | JavaScript      |        395 |         21 |         66 |        482 |
+| c:\HAMRANDROID\hamr-android\hamr\components\search\searchReviewOrder.js                     | JavaScript      |        434 |         20 |         72 |        526 |
+| c:\HAMRANDROID\hamr-android\hamr\components\settings\generalSettings.js                     | JavaScript      |        442 |          8 |         62 |        512 |
+| c:\HAMRANDROID\hamr-android\hamr\components\settings\printSettings.js                       | JavaScript      |        241 |          1 |         47 |        289 |
+| c:\HAMRANDROID\hamr-android\hamr\components\settings\settings.js                            | JavaScript      |        244 |          6 |         53 |        303 |
+| c:\HAMRANDROID\hamr-android\hamr\components\settings\settingsRouter.js                      | JavaScript      |         47 |          9 |          8 |         64 |
+| c:\HAMRANDROID\hamr-android\hamr\components\sync\sync.js                                    | JavaScript      |        587 |         19 |         81 |        687 |
+| c:\HAMRANDROID\hamr-android\hamr\components\~handMade\alphabetPicker.js                     | JavaScript      |        193 |          2 |         39 |        234 |
+| c:\HAMRANDROID\hamr-android\hamr\components\~handMade\deleteModal.js                        | JavaScript      |         82 |          0 |          9 |         91 |
+| c:\HAMRANDROID\hamr-android\hamr\components\~handMade\drawerItem.js                         | JavaScript      |         61 |          3 |          8 |         72 |
+| c:\HAMRANDROID\hamr-android\hamr\components\~handMade\filterPicker.js                       | JavaScript      |         97 |          0 |         11 |        108 |
+| c:\HAMRANDROID\hamr-android\hamr\components\~handMade\fourTable.js                          | JavaScript      |        118 |          4 |         24 |        146 |
+| c:\HAMRANDROID\hamr-android\hamr\components\~handMade\input.js                              | JavaScript      |         26 |          0 |          3 |         29 |
+| c:\HAMRANDROID\hamr-android\hamr\components\~handMade\item.js                               | JavaScript      |         46 |          2 |         11 |         59 |
+| c:\HAMRANDROID\hamr-android\hamr\components\~handMade\numberPicker.js                       | JavaScript      |         68 |          0 |         16 |         84 |
+| c:\HAMRANDROID\hamr-android\hamr\components\~handMade\rowInput.js                           | JavaScript      |         53 |          4 |         11 |         68 |
+| c:\HAMRANDROID\hamr-android\hamr\components\~handMade\threeTable.js                         | JavaScript      |        120 |          4 |         24 |        148 |
+| c:\HAMRANDROID\hamr-android\hamr\config.js                                                  | JavaScript      |         11 |          0 |          3 |         14 |
+| c:\HAMRANDROID\hamr-android\hamr\hoc\addHeader.js                                           | JavaScript      |         74 |          2 |          8 |         84 |
+| c:\HAMRANDROID\hamr-android\hamr\index.js                                                   | JavaScript      |          4 |          3 |          2 |          9 |
+| c:\HAMRANDROID\hamr-android\hamr\ios\hamrTests\hamrTests.m                                  | Objective-C     |         47 |          6 |         16 |         69 |
+| c:\HAMRANDROID\hamr-android\hamr\ios\hamr\AppDelegate.h                                     | C               |          5 |          6 |          5 |         16 |
+| c:\HAMRANDROID\hamr-android\hamr\ios\hamr\AppDelegate.m                                     | Objective-C     |         24 |          6 |          9 |         39 |
+| c:\HAMRANDROID\hamr-android\hamr\ios\hamr\Base.lproj\LaunchScreen.xib                       | XML             |         42 |          0 |          1 |         43 |
+| c:\HAMRANDROID\hamr-android\hamr\ios\hamr\Images.xcassets\AppIcon.appiconset\Contents.json  | JSON            |         38 |          0 |          0 |         38 |
+| c:\HAMRANDROID\hamr-android\hamr\ios\hamr\Images.xcassets\Contents.json                     | JSON            |          6 |          0 |          1 |          7 |
+| c:\HAMRANDROID\hamr-android\hamr\ios\hamr\main.m                                            | Objective-C     |          7 |          6 |          4 |         17 |
+| c:\HAMRANDROID\hamr-android\hamr\metro.config.js                                            | JavaScript      |         13 |          6 |          2 |         21 |
+| c:\HAMRANDROID\hamr-android\hamr\navigation\nav.js                                          | JavaScript      |        319 |         25 |         61 |        405 |
+| c:\HAMRANDROID\hamr-android\hamr\package-lock.json                                          | JSON            |     22,643 |          0 |          1 |     22,644 |
+| c:\HAMRANDROID\hamr-android\hamr\package.json                                               | JSON            |         63 |          0 |          1 |         64 |
+| c:\HAMRANDROID\hamr-android\hamr\scripts\fixNodeModules.ps1                                 | PowerShell      |          1 |          0 |          0 |          1 |
+| c:\HAMRANDROID\hamr-android\hamr\scripts\gclean.bat                                         | Batch           |          3 |          0 |          0 |          3 |
+| c:\HAMRANDROID\hamr-android\hamr\scripts\pullArchiveData.ps1                                | PowerShell      |          4 |          0 |          2 |          6 |
+| c:\HAMRANDROID\hamr-android\hamr\scripts\pullHamrData.ps1                                   | PowerShell      |          4 |          0 |          2 |          6 |
+| c:\HAMRANDROID\hamr-android\hamr\styles\colors.js                                           | JavaScript      |         24 |          1 |          3 |         28 |
+| c:\HAMRANDROID\hamr-android\hamr\styles\inventoryStyles.js                                  | JavaScript      |        177 |          6 |          2 |        185 |
+| c:\HAMRANDROID\hamr-android\hamr\styles\modalStyles.js                                      | JavaScript      |         64 |          3 |          2 |         69 |
+| c:\HAMRANDROID\hamr-android\hamr\styles\orderStyles.js                                      | JavaScript      |        168 |          5 |          3 |        176 |
+| c:\HAMRANDROID\hamr-android\hamr\translations\en.json                                       | JSON            |        239 |          0 |         27 |        266 |
+| c:\HAMRANDROID\hamr-android\hamr\translations\fr.json                                       | JSON            |        236 |          0 |         25 |        261 |
+| c:\HAMRANDROID\hamr-android\hamr\translations\langHelpers.js                                | JavaScript      |         22 |          4 |          5 |         31 |
+| Total                                                                                       |                 |     37,718 |        940 |      2,763 |     41,421 |
++---------------------------------------------------------------------------------------------+-----------------+------------+------------+------------+------------+

@@ -1,10 +1,10 @@
 import React from 'react'
 import {
-	Text,
-	View,
-	StyleSheet,
-	TextInput,
-	TouchableNativeFeedback
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableNativeFeedback
 } from 'react-native'
 
 import Table from '../~handMade/fourTable'
@@ -13,252 +13,242 @@ import DeleteModal from '../~handMade/deleteModal'
 
 import { translate } from '../../translations/langHelpers'
 import color from '../../styles/colors'
-import sqldb from '../misc/database';
+import sqldb from '../misc/database'
 
-import Analytics from '../../analytics/ga';
-
+import Analytics from '../../analytics/ga'
 
 class OrderReviewMarketOrder extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      tableHead: [
+        translate('item_no'),
+        translate('qty'),
+        translate('ext_cost'),
+        translate('description')
+      ],
+      tableData: [],
+      cost: '$0.00',
+      retail: '$0.00',
+      lines: 0,
+      selected: null,
+      isDeleteModalVisible: false
+    }
 
-	constructor(props) {
-		super(props)
-		this.state =  {
-			tableHead: [
-				translate("item_no"),
-				translate("qty"),
-				translate("ext_cost"),
-				translate("description")
-			],
-			tableData: [],
-			cost: '$0.00',
-			retail: '$0.00',
-			lines: 0,
-			selected: null,
-			isDeleteModalVisible: false
-		}
+    this.deleteColor = color.delete_line
+  }
 
-		this.deleteColor = color.delete_line
-	}
+  componentDidMount () {
+    Analytics.trackScreenView('Review Market Order')
+    this.initDb()
+  }
+  
 
-	componentDidMount() {
-		Analytics.trackScreenView("Review Market Order");
-		this.initDb();
-	}
+  // ````````````BACKEND FUNCTIONS``````````````
 
+  initDb = () => {
+    this.start()
+  }
 
-	// ````````````BACKEND FUNCTIONS``````````````
-
-	initDb = () => {
-		this.start();
-	}
-
-	start = () => {
-		this.getResults(`SELECT MarketOrder.*, 
+  start = () => {
+    this.getResults(`SELECT MarketOrder.*, 
 		ifnull(Market.Description, '${translate('not_on_file')}') as Description,
 		Market.RetailPrice, Market.Cost 
 		FROM MarketOrder LEFT JOIN Market 
 		ON MarketOrder.SkuNum = Market.SkuNum`)
-	}
+  }
 
-	// select row, color selected
-	// uncolor unselected
-	selectRow = (data) => {
-		let ans = []
-		let len = this.state.tableData.length
-		let selected = -1;
+  // select row, color selected
+  // uncolor unselected
+  selectRow = (data) => {
+    const ans = []
+    const len = this.state.tableData.length
+    let selected = -1
 
-		for (var i=0; i<len; ++i) {
-			let x = this.state.tableData[i]
+    for (let i = 0; i < len; ++i) {
+      const x = this.state.tableData[i]
 
-			let back = i % 2 == 0 ? color.grey : 'white'
+      let back = i % 2 == 0 ? color.grey : 'white'
 
-			if (x.key == data.upc) {
-				back = this.deleteColor
-				selected = x.key;
-			}
+      if (x.key == data.upc) {
+        back = this.deleteColor
+        selected = x.key
+      }
 
-			ans.push({
-				key: x.key,
-				descr: x.descr,
-				boh: x.boh,
-				item: x.item,
-				cost: x.cost,
-				retailPrice: x.retailPrice,
-				back: back
-			})
-		}
+      ans.push({
+        key: x.key,
+        descr: x.descr,
+        boh: x.boh,
+        item: x.item,
+        cost: x.cost,
+        retailPrice: x.retailPrice,
+        back
+      })
+    }
 
-		this.setState({
-			tableData: ans,
-			selected: selected
-		})
-	}
+    this.setState({
+      tableData: ans,
+      selected
+    })
+  }
 
+  getResults = (q) => {
+    sqldb.executeReader(q).then((results) => {
+      const len = results.length
 
-	getResults = (q) => {
-		sqldb.executeReader(q).then((results) => {
-			let len = results.length
+      if (len > 0) {
+        this.parseResults(results)
+      } else {
+        // Market Order Table Empty!
+      }
+    })
+  }
 
-			if (len > 0) {
-				this.parseResults(results)
-			} else {
-				// Market Order Table Empty!
-			}
+  parseResults = (results) => {
+    const len = results.length
 
-		})
-	}
+    const ans = []
+    for (let i = 0; i < len; i++) {
+      const x = results.item(i)
+      const extCost = x.Qty * x.Cost
 
+      ans.push({
+        key: x.SkuNum,
+        descr: x.Description,
+        boh: extCost.toFixed(2),
+        retailPrice: x.RetailPrice,
+        item: x.Qty,
+        back: i % 2 == 0 ? color.grey : 'white',
+        cost: x.Cost
+      })
+    }
 
-	parseResults = (results) => {
-		let len = results.length
+    this.setState({
+      tableData: ans
+    })
 
-		let ans = []
-		for (var i=0; i<len; i++) {
-			let x = results.item(i)
-			let extCost = x.Qty * x.Cost
+    this.stats()
+  }
 
-			ans.push({
-				key: x.SkuNum,
-				descr: x.Description,
-				boh: extCost.toFixed(2),
-				retailPrice: x.RetailPrice,
-				item: x.Qty,
-				back: i%2 == 0 ? color.grey : 'white',
-				cost: x.Cost
-			})
-		}
+  stats = () => {
+    const len = this.state.tableData.length
 
-		this.setState({
-			tableData: ans
-		})
+    let cost = 0; let retail = 0
+    for (let i = 0; i < len; ++i) {
+      const x = this.state.tableData[i]
 
-		this.stats()
-	}
+      cost += (x.item * x.cost)
+      retail += (x.item * x.retailPrice)
+    }
 
-	stats = () => { 
-		let len = this.state.tableData.length
+    this.setState({
+      cost: '$' + cost.toFixed(2),
+      lines: len,
+      retail: '$' + retail.toFixed(2)
+    })
+  }
 
-		let cost = 0, retail = 0
-		for (var i=0; i<len; ++i) {
-			let x = this.state.tableData[i]
+  tryDelete = () => {
+    if (this.state.selected != null) {
+      this.toggleDeleteModal()
+    }
+  }
 
-			cost += (x.item * x.cost)
-			retail += (x.item * x.retailPrice)
-		}
+  toggleDeleteModal = () => {
+    this.setState({
+      isDeleteModalVisible: !this.state.isDeleteModalVisible
+		 })
+  }
 
-		this.setState({
-			cost: '$' + cost.toFixed(2),
-			lines: len,
-			retail: '$' + retail.toFixed(2)
-		})
-	}
+  deleteLine = () => {
+    this.toggleDeleteModal()
+    const len = this.state.tableData.length
+    const ans = []
+    for (let i = 0; i < len; ++i) {
+      const x = this.state.tableData[i]
 
-	tryDelete = () => {
-		if (this.state.selected != null) {
-			this.toggleDeleteModal();
-		}
-	}
+      if (x.back != color.delete_line) {
+        ans.push(x)
+      } else {
+        const q = `DELETE FROM MarketOrder WHERE SkuNum = ${x.key}`
+        sqldb.executeQuery(q)
+      }
+    }
 
-	toggleDeleteModal = () => {
-		this.setState({ 
-			isDeleteModalVisible: !this.state.isDeleteModalVisible,
-		 });
+    this.state.tableData = ans
+    this.state.selected = null
 
-	}
+    this.stats()
+  }
 
-	deleteLine = () => {
-		this.toggleDeleteModal();
-		let len = this.state.tableData.length
-		let ans = []
-		for (var i=0; i<len; ++i) {
-			let x = this.state.tableData[i]
+  // ``````````````DEBUG FUNCTIONS``````````````
 
-			if (x.back != color.delete_line) {
-				ans.push(x)
-			} else {
-				let q = `DELETE FROM MarketOrder WHERE SkuNum = ${x.key}`;
-				sqldb.executeQuery(q);
-			}
-		}
+  log = (s) => {
+    const debug = true
+    if (debug) {
+      console.log(s)
+    }
+  }
 
-		this.state.tableData = ans;
-		this.state.selected = null;
-
-		this.stats();
-	}
-
-
-
-	// ``````````````DEBUG FUNCTIONS``````````````
-
-	log = (s) => {
-		let debug = true
-		if (debug) {
-			console.log(s)
-		}
-	}
-
-
-
-	render() {
-		return(
-			<View style={{flex: 1, width: "100%"}}>
-				<View style={{flex: 1}}>
+  render () {
+    return (
+			<View style={{ flex: 1, width: '100%' }}>
+				<View style={{ flex: 1 }}>
 
 					<View style={style.stats}>
 						<View>
 							{ global.canSeeCost &&
-								<Text style={S.title}> {translate("cost")}: </Text>
+								<Text style={S.title}> {translate('cost')}: </Text>
 							}
-							
-							<Text style={S.title}> {translate("num_lines")}: </Text>
-							<Text style={S.title}> {translate("retail")}: </Text>
+
+							<Text style={S.title}> {translate('num_lines')}: </Text>
+							<Text style={S.title}> {translate('retail')}: </Text>
 						</View>
 						<View>
 							{ global.canSeeCost &&
-								<Text style={[S.value, {color: color.total_cost}]}>{this.state.cost} </Text>
+								<Text style={[S.value, { color: color.total_cost }]}>{this.state.cost} </Text>
 							}
 							<Text style={S.value}>{this.state.lines} </Text>
-							<Text style={[S.value, {color: color.total_cost}]}>{this.state.retail} </Text>
+							<Text style={[S.value, { color: color.total_cost }]}>{this.state.retail} </Text>
 						</View>
 					</View>
 
 					<Table
 						tableHead={this.state.tableHead}
 						tableData={this.state.tableData}
-						rowPress={this.selectRow} 
+						rowPress={this.selectRow}
 						costVisible={global.canSeeCost}/>
 
 				</View>
 				<View style={[style.orderPrintPanel]}>
-				<TouchableNativeFeedback 
+				<TouchableNativeFeedback
 					background={TouchableNativeFeedback.Ripple(color.btn_selected)}
-					onPress={() => this.props.navigation.navigate('DetailedEntry_MarketOrder', {sku: this.state.selected})}>
+					onPress={() => this.props.navigation.navigate('DetailedEntry_MarketOrder', { sku: this.state.selected })}>
 					<View style={style.btn}>
-						<Text style={style.btnText}> {translate("item_details_tab")}</Text>
+						<Text style={style.btnText}> {translate('item_details_tab')}</Text>
 					</View>
 				</TouchableNativeFeedback>
 
-				<TouchableNativeFeedback 
+				<TouchableNativeFeedback
 					background={TouchableNativeFeedback.Ripple(color.btn_selected)}
 					onPress={this.toOrderReview}>
 					<View style={[style.btn, style.btnSelected]}>
-						<Text style={style.btnText}> {translate("order_review_tab")} </Text>
+						<Text style={style.btnText}> {translate('order_review_tab')} </Text>
 					</View>
 				</TouchableNativeFeedback>
 
-				<TouchableNativeFeedback 
+				<TouchableNativeFeedback
 					background={TouchableNativeFeedback.Ripple(color.btn_selected)}
-					onPress={() => this.props.navigation.navigate('OrderInfo', {sku: this.state.selected})}>
+					onPress={() => this.props.navigation.navigate('OrderInfo', { sku: this.state.selected })}>
 					<View style={style.btn}>
-						<Text style={style.btnText}> {translate("order_info_tab")} </Text>
+						<Text style={style.btnText}> {translate('order_info_tab')} </Text>
 					</View>
 				</TouchableNativeFeedback>
-				<TouchableNativeFeedback 
+				<TouchableNativeFeedback
 					background={TouchableNativeFeedback.Ripple(color.btn_selected)}
 					onPress={this.tryDelete}>
 					<View style={style.btn}>
-						<Text style={style.btnText}> {translate("delete_line_tab")} </Text>
+						<Text style={style.btnText}> {translate('delete_line_tab')} </Text>
 					</View>
 				</TouchableNativeFeedback>
 			</View>
@@ -268,97 +258,95 @@ class OrderReviewMarketOrder extends React.Component {
 					visible={this.state.isDeleteModalVisible}
 					onHide={this.toggleDeleteModal}
 				/>
-			<TextInput 
+			<TextInput
 				style={{ width: 0, height: 0, padding: 0, margin: 0 }}
 				showSoftInputOnFocus={false}
 				autoFocus={true}
 			/>
 			</View>
-			
-		)
-	}
+
+    )
+  }
 }
 
-function Statistic(props) {
-	const style = StyleSheet.create({
-		box: {
-			flexDirection: 'row',
-			justifyContent: 'space-between',
-			padding: 3,
-			marginLeft: "5%",
-			marginRight: "5%",
+function Statistic (props) {
+  const style = StyleSheet.create({
+    box: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      padding: 3,
+      marginLeft: '5%',
+      marginRight: '5%'
 
-		},
-		title: {
-			fontSize: 20,
-			color: 'black'
-		},
-		value: {
-			fontSize: 20
-		}
-	})
-	return(
+    },
+    title: {
+      fontSize: 20,
+      color: 'black'
+    },
+    value: {
+      fontSize: 20
+    }
+  })
+  return (
 		<View style = {style.box}>
 			<Text style={style.title}> {props.title} </Text>
 			<Text style={style.value}> {props.value} </Text>
 		</View>
-	)
+  )
 }
 
-
 const S = StyleSheet.create({
-	box: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		padding: 3,
-		marginLeft: "5%",
-		marginRight: "5%",
+  box: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 3,
+    marginLeft: '5%',
+    marginRight: '5%'
 
-	},
-	title: {
-		fontSize: 18,
-		color: 'black'
-	},
-	value: {
-		fontSize: 18,
-	}
+  },
+  title: {
+    fontSize: 18,
+    color: 'black'
+  },
+  value: {
+    fontSize: 18
+  }
 })
 
-let style = StyleSheet.create({
-	stats: {
-		backgroundColor: color.grey,
-		justifyContent: 'center',
-		padding: 5,
-		flexDirection: "row",
-		justifyContent: "space-between"
-	},
-	orderPrintPanel: {
-		flexDirection: 'row',
-		justifyContent: 'space-around',
-		marginTop: 2
-	},
-	btn: {
-		padding: 5,
-		flex: 1,
-		alignItems: 'center',
-		borderColor: 'black',
-		borderWidth: 1,
-		backgroundColor: 'white',
-		justifyContent: 'center',
-		backgroundColor: color.btn_unselected,
-		height: 50,
-		borderRadius: 5
-	},
-	btnText: {
-		fontSize: 16,
-		color: 'black',
-		textAlign: 'center'
-	},
-	btnSelected: {
-		backgroundColor: color.btn_selected
-	}
+const style = StyleSheet.create({
+  stats: {
+    backgroundColor: color.grey,
+    justifyContent: 'center',
+    padding: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  orderPrintPanel: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 2
+  },
+  btn: {
+    padding: 5,
+    flex: 1,
+    alignItems: 'center',
+    borderColor: 'black',
+    borderWidth: 1,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    backgroundColor: color.btn_unselected,
+    height: 50,
+    borderRadius: 5
+  },
+  btnText: {
+    fontSize: 16,
+    color: 'black',
+    textAlign: 'center'
+  },
+  btnSelected: {
+    backgroundColor: color.btn_selected
+  }
 
+})
 
-	})
-
-export default addHeader(OrderReviewMarketOrder, 'Review Order')
+export default addHeader(OrderReviewMarketOrder, 'review_order')

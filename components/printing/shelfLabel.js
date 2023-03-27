@@ -17,6 +17,7 @@ const RecordSeparator            = "<RS>";       // 1E
 const UnitSeparator              = "<US>";       // 1F
 
 const MaxLineLength = 18;
+const MaxnumLength = 7;
 const NewLine = '\n';
 
 class ShelfLabel {
@@ -122,7 +123,7 @@ class ShelfLabel {
         this.AddLine(this.GetRegularFormat(item.retailUnit));
 
         // Item Number
-        this.AddLine(this.GetRegularFormat(item.skuNum));
+        this.AddLine(this.SplitSkuNum(item.skuNum));
 
         // Source code + hazard code placeholder
         this.AddLine(this.GetRegularFormat(''));
@@ -183,7 +184,15 @@ class ShelfLabel {
         return splitPos;
     }
 
-
+    static SplitSkuNum(skuNum) {
+        if (MaxnumLength > skuNum.length) {
+            return `${StartOfText}${skuNum}${CarriageReturn}${EndOfText}`;
+                }
+            else {
+                return  StartOfText + skuNum.substring(0, 4)+ "-" + skuNum.substring(4, skuNum.length) +CarriageReturn + EndOfText; 
+            } 
+    
+        }
     static AddLine(line) {
         data += line + NewLine;
     }

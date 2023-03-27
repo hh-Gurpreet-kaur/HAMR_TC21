@@ -1,0 +1,60 @@
+REM Direct Thermal Shelf Label 45mm Zebra ZQ6xx
+REM HomeHardware Stores Ltd.
+REM Order of fields:
+REM ================
+REM V00 Description Line 1
+REM V01 Description Line 2
+REM V02 MFG Model Num
+REM V03 Barcode UPC-A
+REM V04 Retail Price
+REM V05 Unit
+REM V06 SKU Number
+REM V07 Item Source Code
+REM V08 User Def Field
+REM V09 Over-ride Indicator
+
+D10
+S3
+OD
+N
+R0,0
+q384
+Q203
+FK"*"
+FS"Shelf45"
+V00,18,C,""
+V01,18,C,""
+V02,24,C,""
+V03,12,N,""
+V04,8,R,""
+V05,3,L,""
+V06,8,L,""
+V07,1,L,""
+V08,8,L,""
+V09,1,L,""
+ZT
+A55,7,0,4,1,1,N,V00
+A55,30,0,4,1,1,N,V01
+A55,55,0,2,1,1,N,V02
+B150,145,0,UA0,2,2,45,N,V03
+A25,80,0,5,1,1,N,V04
+A315,110,0,4,1,1,N,V05
+A20,145,0,4,1,1,N,V06
+A150,145,0,4,1,1,N,V07
+A20,170,0,4,1,1,N,V08
+A150,170,0,4,1,1,N,V09
+FE
+FR"Shelf45"
+?
+APRON, CARP WAIST
+CTN 4PKT ENGLSH
+HH       4PKT
+40001010024
+12.99
+PKG
+1010-030
+H
+18952
+&
+P1,1
+EOF

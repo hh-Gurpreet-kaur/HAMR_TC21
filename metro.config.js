@@ -15,6 +15,6 @@
 		}),
 	},
 	resolver: {
-		assetExts: ['png', 'jpg', 'txt']
+		assetExts: ['png', 'jpg',"md", 'txt']
 	}
  }

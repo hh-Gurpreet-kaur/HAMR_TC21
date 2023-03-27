@@ -188,6 +188,7 @@ public class ExportModule extends ReactContextBaseJavaModule {
     }
 
     public void exportMarket() {
+        
         /*
             For every order in order table, corresponding line should be (in mdmarket.dat)
             item|deal|consumer#|qty|qty correct|selected
@@ -326,6 +327,19 @@ public class ExportModule extends ReactContextBaseJavaModule {
         p("end \n\n\n\n.");
     }
 
+
+    @ReactMethod
+    public void marketexport() {
+        // init database
+        File f = new File("/data/data/com.hamr/databases/HomeNew.db");
+        db = SQLiteDatabase.openOrCreateDatabase(f, null);
+
+        // 1. get data from db
+        // 2. parse through data
+        exportMarket();
+        p("end \n\n\n\n.");
+    }
+    
     @ReactMethod
     public void archive() {
 
@@ -359,14 +373,60 @@ public class ExportModule extends ReactContextBaseJavaModule {
                // }
                 try{copy(fSource,fDest);}
                 catch(Exception er){ Hamr.Logging.error("Failed to archive " + files[i], er.getMessage()); }
-
                 Hamr.Logging.log("Archiving " + dest + " complete.");
+                try{fSource.delete();}
+                catch(Exception er){ Hamr.Logging.error("Failed to delete " + files[i], er.getMessage()); }
+                Hamr.Logging.log("Deleting " + source + " complete.");
             }
             catch (Exception ex) {
                 Hamr.Logging.error("Failed to archive " + files[i], ex.getMessage());
             }
+        }
 
+    }
+    
+    @ReactMethod
+    public void copyMarketFile(String storeNum) {
 
+        Context context = getApplicationContext();
+       // File logFile = new File(context.getExternalFilesDir(null), getFileName());
+        String dataFilesDir = getReactApplicationContext().getFilesDir().getPath();
+        String[] file = {  "mdmarket.dat" };
+        String[] noExtension = {  "mdmarket" };
+
+        File dirPath = new File(context.getExternalFilesDir(null).getPath(), "/marketfiles");
+        if (!dirPath.exists()) {
+            dirPath.mkdir();
+        }
+
+        // Archive files
+        for (int i = 0; i < file.length; i++) {
+            try {
+                String source = dataFilesDir + "/" + file[i];
+                Hamr.Logging.log("Source:  " + source);
+                String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                
+                String dest = context.getExternalFilesDir(null).getPath() + "/marketfiles/" + noExtension[i] + "_" + storeNum;
+                Hamr.Logging.log("Source:  " + source);
+                Hamr.Logging.log("Dest:  " + dest);
+                p(source);
+                p(dest);
+                File fSource = new File(source);
+                File fDest = new File(dest);
+              //  if (!fSource.renameTo(fDest))
+              //  {
+              //      Hamr.Logging.log("Archiving error");
+               // }
+                try{copy(fSource,fDest);}
+                catch(Exception er){ Hamr.Logging.error("Failed to archive " + file[i], er.getMessage()); }
+                Hamr.Logging.log("Archiving " + dest + " complete.");
+                try{fSource.delete();}
+                catch(Exception er){ Hamr.Logging.error("Failed to delete " + file[i], er.getMessage()); }
+                Hamr.Logging.log("Deleting " + source + " complete.");
+            }
+            catch (Exception ex) {
+                Hamr.Logging.error("Failed to archive " + file[i], ex.getMessage());
+            }
         }
 
     }
@@ -375,6 +435,7 @@ public class ExportModule extends ReactContextBaseJavaModule {
     public void p(String s) {
         Log.i("NativeData", s);
     }
+    
 
     public static void copy(File src, File dst) throws IOException {
         InputStream in = new FileInputStream(src);
@@ -394,4 +455,7 @@ public class ExportModule extends ReactContextBaseJavaModule {
             in.close();
         }
     }
+
+
 }
+

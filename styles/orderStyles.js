@@ -105,7 +105,7 @@ const orderStyles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: "center",
 		width: "100%",
-		marginTop: 2,
+		marginTop: 12,
 	},
 	row: {
 		width: "100%", 

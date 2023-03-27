@@ -14,7 +14,9 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 
+
 import static io.invertase.firebase.app.ReactNativeFirebaseApp.getApplicationContext;
+
 
 public class Hamr {
     public static class Logging extends ReactContextBaseJavaModule {

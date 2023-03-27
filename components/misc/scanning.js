@@ -12,7 +12,16 @@ let Scanning = {
             return upc;
         }
     },
-
+    checknonHomeUpc: function(upc) {
+         if (upc.slice(0, 4) !== UpcPrefix) {
+            if (upc.charAt(11) == getCheckDigit(upc.slice(0, 11))) {
+                return upc.slice(4,11);
+            } else {
+                return upc;
+            }
+        } 
+        
+    },
     isHomeUpc: function(upc) {
         return (upc.slice(0,4) == "4000")
     },

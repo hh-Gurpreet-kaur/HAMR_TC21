@@ -9,7 +9,7 @@ import {
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import color from '../styles/colors';
-
+import { translate } from "../translations/langHelpers";
 Header = (props) => {
 	return(
 		<View style={style.header}>
@@ -36,11 +36,11 @@ export default function addHeader(Passed, Title) {
 			Keyboard.dismiss();
 			this.props.navigation.toggleDrawer();
 		}
-
+// translate(Title) translates header title, add translation for every page default header title in en and fr pages
 		render() {
 			return(
 				<View style={{flex: 1}}>
-					<Header title={Title} onDrawerPress={this.onDrawerPress} {...this.props} />
+					<Header title={translate(Title)} onDrawerPress={this.onDrawerPress} {...this.props} />
 					<Passed {...this.props} />
 				</View>
 			)

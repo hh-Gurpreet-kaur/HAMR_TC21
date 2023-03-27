@@ -48,14 +48,12 @@ public class SmbModule extends ReactContextBaseJavaModule {
         domain = "null";
     }
 
-
     @Override
     public String getName() {
         return "SmbModule";
     }
 
-
-    private boolean checkDatabaseModified(String ipAddress) throws SmbException{
+    private boolean checkDatabaseModified(String ipAddress) throws SmbException {
         boolean shouldSync = false;
         String url = "smb://" + ipAddress + "/home/mobile/export/ex1.tmp";
 
@@ -66,7 +64,7 @@ public class SmbModule extends ReactContextBaseJavaModule {
             return true;
         }
 
-        try (SmbFile sourceFile = new SmbFile(url, smbAuth)){
+        try (SmbFile sourceFile = new SmbFile(url, smbAuth)) {
             long sourceModified = sourceFile.lastModified();
             long destModified = destFile.lastModified();
             if (destModified < sourceModified) {
@@ -74,18 +72,117 @@ public class SmbModule extends ReactContextBaseJavaModule {
             } else {
                 shouldSync = false;
             }
-        }
-        catch (MalformedURLException ex) {
+        } catch (MalformedURLException ex) {
             p(ex.getMessage());
         }
 
         return shouldSync;
     }
 
+    // check to avoid blank Order files for Integrated version
+    private boolean checkOrderCountsModified(String ipAddress) throws SmbException {
+        boolean shouldSync = false;
+        String url = "smb://" + ipAddress + "/home/mobile/import/mdorder.dat";
+
+        String filesDir = getReactApplicationContext().getFilesDir().getPath();
+        File destFile = new File(filesDir, "mdorder.dat");
+
+        if (!destFile.exists()) {
+            return true;
+        }
+
+        try (SmbFile sourceFile = new SmbFile(url, smbAuth)) {
+            long sourceModified = sourceFile.lastModified();
+            long destModified = destFile.lastModified();
+            if (destModified < sourceModified) {
+                shouldSync = true;
+            } else {
+                shouldSync = false;
+            }
+        } catch (MalformedURLException ex) {
+            p(ex.getMessage());
+        }
+
+        return shouldSync;
+    }
+
+    // check to avoid blank inventory files Integrated version
+    private boolean checkInventoryCountsModified(String ipAddress) throws SmbException {
+        boolean shouldSync = false;
+        String url = "smb://" + ipAddress + "/home/mobile/import/mdinventory.dat";
+
+        String filesDir = getReactApplicationContext().getFilesDir().getPath();
+        File destFile = new File(filesDir, "mdinventory.dat");
+
+        if (!destFile.exists()) {
+            return true;
+        }
+        try (SmbFile sourceFile = new SmbFile(url, smbAuth)) {
+            long sourceModified = sourceFile.lastModified();
+            long destModified = destFile.lastModified();
+            if (destModified < sourceModified) {
+                shouldSync = true;
+            } else {
+                shouldSync = false;
+            }
+        } catch (MalformedURLException ex) {
+            p(ex.getMessage());
+        }
+
+        return shouldSync;
+    }
+
+    private boolean checkSAOrderCountsModified(String ipAddress) throws SmbException {
+        boolean shouldSync = false;
+        String url = "smb://" + ipAddress + "/home/mobile/import/mdorder.dat";
+
+        String filesDir = getReactApplicationContext().getFilesDir().getPath();
+        File destFile = new File(filesDir, "mdorder.dat");
+
+        if (!destFile.exists()) {
+            return true;
+        }
+        try (SmbFile sourceFile = new SmbFile(url, smbAuth)) {
+            if (sourceFile.exists()) {
+                shouldSync = true;
+            } else {
+                shouldSync = false;
+            }
+        } catch (MalformedURLException ex) {
+            p(ex.getMessage());
+        }
+
+        return shouldSync;
+    }
+
+    // check to avoid blank inventory files StandAlone version
+    private boolean checkSAInventoryCountsModified(String ipAddress) throws SmbException {
+        boolean shouldSync = false;
+        String url = "smb://" + ipAddress + "/home/mobile/import/mdinventory.dat";
+
+        String filesDir = getReactApplicationContext().getFilesDir().getPath();
+        File destFile = new File(filesDir, "mdinventory.dat");
+
+        if (!destFile.exists()) {
+            return true;
+        }
+
+        try (SmbFile sourceFile = new SmbFile(url, smbAuth)) {
+            if (sourceFile.exists()) {
+                shouldSync = true;
+            } else {
+                shouldSync = false;
+            }
+        } catch (MalformedURLException ex) {
+            p(ex.getMessage());
+        }
+
+        return shouldSync;
+    }
 
     @ReactMethod
     public void syncFilesFromServer(ReadableArray listOfFiles, String ipAddress, String smbUsername, String smbPassword,
-                                       boolean forceSync, Promise promise) throws CIFSException, MalformedURLException {
+            boolean forceSync, Promise promise) throws CIFSException, MalformedURLException {
 
         p("-------------------------------------------------------------------");
         p("Syncing in...");
@@ -110,8 +207,7 @@ public class SmbModule extends ReactContextBaseJavaModule {
 
                 promise.resolve(true);
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             p(ex.getMessage());
             Hamr.Logging.error("Error syncing files from server. Stopping sync process.", ex.getMessage());
             promise.resolve(false);
@@ -121,65 +217,67 @@ public class SmbModule extends ReactContextBaseJavaModule {
         promise.resolve("complete");
     }
 
-
     @ReactMethod
     public void syncFilesToServer(ReadableArray listOfFiles, String ipAddress, String smbUsername, String smbPassword,
-                                  String prismServer, String prismUser, String prismPassword, boolean guestAccess,
-                                  Promise promise) throws CIFSException, MalformedURLException {
+            String prismServer, String prismUser, String prismPassword, boolean guestAccess,
+            Promise promise) throws CIFSException, MalformedURLException {
 
-        File dbPath = new File(getReactApplicationContext().getDataDir().getPath() ,"/files/Images.tar");
-
+        File dbPath = new File(getReactApplicationContext().getDataDir().getPath(), "/files/Images.tar");
 
         p("-------------------------------------------------------------------");
         Hamr.Logging.log("Exporting files to server.");
         p("Syncing in...");
-
-        CIFSContext base = SingletonContext.getInstance();
-        smbAuth = base.withCredentials(new NtlmPasswordAuthenticator(domain, smbUsername, smbPassword));
-
-        if (guestAccess) {
-            smbPrismAuth = base.withGuestCrendentials();
-        } else {
-            smbPrismAuth = base.withCredentials(new NtlmPasswordAuthenticator(domain, prismUser, prismPassword));
-        }
         try {
-        long startTime = System.currentTimeMillis();
-        String dataFilesDir = getReactApplicationContext().getFilesDir().getPath();
-
-        for (int i = 0; i < listOfFiles.size(); i++) {
-            String smbDir = "smb://" + ipAddress + "/home/mobile/import/";
-
-            if (!prismServer.equals("") &&
-                    (listOfFiles.getString(i).equals("mdorder.dat") ||
-                            listOfFiles.getString(i).equals("mdinventory.dat"))) {
-                smbDir = "smb://" + prismServer + "/import/";
-
-                copyFileToServer(listOfFiles.getString(i), listOfFiles.getString(i), ipAddress, dataFilesDir, smbDir, true);
+            CIFSContext base = SingletonContext.getInstance();
+            smbAuth = base.withCredentials(new NtlmPasswordAuthenticator(domain, smbUsername, smbPassword));
+            if (guestAccess) {
+                smbPrismAuth = base.withGuestCrendentials();
             } else {
-                copyFileToServer(listOfFiles.getString(i), listOfFiles.getString(i), ipAddress, dataFilesDir, smbDir, false);
+                smbPrismAuth = base.withCredentials(new NtlmPasswordAuthenticator(domain, prismUser, prismPassword));
             }
 
+            long startTime = System.currentTimeMillis();
+            String dataFilesDir = getReactApplicationContext().getFilesDir().getPath();
 
+            for (int i = 0; i < listOfFiles.size(); i++) {
+                String smbDir = "smb://" + ipAddress + "/home/mobile/import/";
+                if (!prismServer.equals("")
+                        && ((checkInventoryCountsModified(ipAddress) || checkOrderCountsModified(ipAddress))
+                                || (!checkInventoryCountsModified(ipAddress) || !checkOrderCountsModified(ipAddress)))) {
+                    if (listOfFiles.getString(i).equals("mdinventory.dat") ||
+                            listOfFiles.getString(i).equals("mdorder.dat")) {
+                        smbDir = "smb://" + prismServer + "/import/";
+                        copyFileToServer(listOfFiles.getString(i), listOfFiles.getString(i), ipAddress, dataFilesDir,
+                                smbDir, true);
+                    } else {
+                        copyFileToServer(listOfFiles.getString(i), listOfFiles.getString(i), ipAddress, dataFilesDir,
+                                smbDir, false);
+                    }
+                } else if (prismServer.equals("") && ((checkSAInventoryCountsModified(ipAddress)
+                        || checkSAOrderCountsModified(ipAddress))
+                        || (!checkSAInventoryCountsModified(ipAddress) ||  !checkSAOrderCountsModified(ipAddress)))) {
+                    copyFileToServer(listOfFiles.getString(i), listOfFiles.getString(i), ipAddress, dataFilesDir,
+                            smbDir, false);
+                }
+
+            }
+            long elapsed = System.currentTimeMillis() - startTime;
+            p("Total Elapsed Time: " + elapsed + "ms");
+            Hamr.Logging.log("Total Elapsed Time: " + elapsed + "ms");
         }
 
-        long elapsed = System.currentTimeMillis() - startTime;
-        p("Total Elapsed Time: " + elapsed + "ms");
-        Hamr.Logging.log("Total Elapsed Time: " + elapsed + "ms");
-    }
         catch (Exception ex) {
-        p(ex.getMessage());
-        Hamr.Logging.error("Error exporting files to server. Stopping sync process.", ex.getMessage());
-        promise.resolve(false);
-    }
+            p(ex.getMessage());
+            Hamr.Logging.error("Error exporting files to server. Stopping sync process.", ex.getMessage());
+            promise.resolve(false);
+        }
         promise.resolve(true);
     }
-
-
+ 
     @ReactMethod
     public void backupDatabase(String dbName, String outputDir, String ipAddress, String storeNum,
-                               String user, String pass,
-                                    Promise promise) throws CIFSException, MalformedURLException {
-
+            String user, String pass,
+            Promise promise) throws CIFSException, MalformedURLException {
 
         p("-------------------------------------------------------------------");
         Hamr.Logging.log("Backing up database to server.");
@@ -189,17 +287,17 @@ public class SmbModule extends ReactContextBaseJavaModule {
         String filename = "";
 
         smbAuth = base.withCredentials(new NtlmPasswordAuthenticator(domain, user, pass));
-        //smbAuth = base.withAnonymousCredentials();
+        // smbAuth = base.withAnonymousCredentials();
 
         try {
             long startTime = System.currentTimeMillis();
-            String dataFilesDir = getReactApplicationContext().getDataDir().getPath() +  "/databases/";
+            String dataFilesDir = getReactApplicationContext().getDataDir().getPath() + "/databases/";
             String smbDir = "smb://" + ipAddress + outputDir;
 
             p(smbDir);
 
-            try ( SmbFile dir = new SmbFile(smbDir, smbAuth);
-                  SmbResource f = new SmbFile(dir, storeNum + "/") ) {
+            try (SmbFile dir = new SmbFile(smbDir, smbAuth);
+                    SmbResource f = new SmbFile(dir, storeNum + "/")) {
 
                 if (!f.exists()) {
                     f.mkdirs();
@@ -213,8 +311,7 @@ public class SmbModule extends ReactContextBaseJavaModule {
             long elapsed = System.currentTimeMillis() - startTime;
             p("Total Elapsed Time: " + elapsed + "ms");
             Hamr.Logging.log("Total Elapsed Time: " + elapsed + "ms");
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             p(ex.getMessage());
             Hamr.Logging.error("Error backing up  to server. Stopping backup process.", ex.getMessage());
             promise.resolve(false);
@@ -222,8 +319,7 @@ public class SmbModule extends ReactContextBaseJavaModule {
         promise.resolve(filename);
     }
 
-
-    String getFilename(String dir, String storeNum) throws SmbException, MalformedURLException{
+    String getFilename(String dir, String storeNum) throws SmbException, MalformedURLException {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         Date date = new Date();
@@ -233,13 +329,13 @@ public class SmbModule extends ReactContextBaseJavaModule {
         try (SmbFile smbDir = new SmbFile(dir + storeNum + "/", smbAuth)) {
             SmbFile[] files = smbDir.listFiles();
 
-            for (SmbFile file: files) {
+            for (SmbFile file : files) {
                 String filename = file.getName();
                 String fileDate = filename.substring(0, filename.length() - 4);
 
-
                 if (fileDate.equals(dateString)) {
-                    int tempFileCount = Integer.parseInt(filename.substring(filename.length() - 4, filename.length() - 3)) + 1;
+                    int tempFileCount = Integer
+                            .parseInt(filename.substring(filename.length() - 4, filename.length() - 3)) + 1;
                     if (tempFileCount > fileCount) {
                         fileCount = tempFileCount;
                     }
@@ -247,16 +343,14 @@ public class SmbModule extends ReactContextBaseJavaModule {
             }
         }
 
-
-
         return dateString + fileCount;
     }
 
     @ReactMethod
-    public void restoreDatabase(String dbName, String sourceFilename, String importDir, String ipAddress, String storeNum,
-                                String user, String pass,
-                                    Promise promise) throws CIFSException, MalformedURLException {
-
+    public void restoreDatabase(String dbName, String sourceFilename, String importDir, String ipAddress,
+            String storeNum,
+            String user, String pass,
+            Promise promise) throws CIFSException, MalformedURLException {
 
         p("-------------------------------------------------------------------");
         Hamr.Logging.log("Restoring database backup from server.");
@@ -264,7 +358,7 @@ public class SmbModule extends ReactContextBaseJavaModule {
         CIFSContext base = SingletonContext.getInstance();
 
         smbAuth = base.withCredentials(new NtlmPasswordAuthenticator(domain, user, pass));
-        //smbAuth = base.withAnonymousCredentials();
+        // smbAuth = base.withAnonymousCredentials();
 
         try {
             long startTime = System.currentTimeMillis();
@@ -275,17 +369,18 @@ public class SmbModule extends ReactContextBaseJavaModule {
             long elapsed = System.currentTimeMillis() - startTime;
             p("Total Elapsed Time: " + elapsed + "ms");
             Hamr.Logging.log("Total Elapsed Time: " + elapsed + "ms");
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             p(ex.getMessage());
-            Hamr.Logging.error("Error restoring backup from server. Stopping restore process.", ex.getMessage());;
+            Hamr.Logging.error("Error restoring backup from server. Stopping restore process.", ex.getMessage());
+            ;
             promise.resolve(false);
         }
         promise.resolve(true);
     }
 
-    private void copyFileFromServer(String destFilename, String filename, String ipAddress, String smbDir) throws IOException{
-        int bufLength = 61440;  // Windows SMB truncates data into chunks of 61440
+    private void copyFileFromServer(String destFilename, String filename, String ipAddress, String smbDir)
+            throws IOException {
+        int bufLength = 61440; // Windows SMB truncates data into chunks of 61440
         String dataFilesDir = getReactApplicationContext().getFilesDir().getPath();
 
         long startTime = System.currentTimeMillis();
@@ -295,20 +390,15 @@ public class SmbModule extends ReactContextBaseJavaModule {
             String defaultDir = "smb://" + ipAddress + "/home/mobile/";
             if (filename.equals("ImageLinks.db")) {
                 url = defaultDir + "images/" + filename;
-            }
-            else if (getFileExtension(filename).equals("db")) {
+            } else if (getFileExtension(filename).equals("db")) {
                 url = defaultDir + "database/" + filename;
-            }
-            else if (getFileExtension(filename).equals("tar")) {
+            } else if (getFileExtension(filename).equals("tar")) {
                 url = defaultDir + "images/" + filename;
-            }
-            else if (getFileExtension(filename).equals("tmp")) {
+            } else if (getFileExtension(filename).equals("tmp")) {
                 url = defaultDir + "export/" + filename;
-            }
-            else if (getFileExtension(filename).equals("ini")) {
+            } else if (getFileExtension(filename).equals("ini")) {
                 url = defaultDir + "../" + filename;
-            }
-            else {
+            } else {
                 url = defaultDir + filename;
             }
         } else {
@@ -317,8 +407,7 @@ public class SmbModule extends ReactContextBaseJavaModule {
 
         p(url);
 
-
-        try ( SmbFile sourceFile = new SmbFile(url, smbAuth) ) {
+        try (SmbFile sourceFile = new SmbFile(url, smbAuth)) {
             File destFile = new File(dataFilesDir, destFilename);
 
             InputStream in = sourceFile.getInputStream();
@@ -341,7 +430,6 @@ public class SmbModule extends ReactContextBaseJavaModule {
             p("Elapsed Time: " + estimatedTime + "ms");
             Hamr.Logging.log("Finished copying. Estimated time: " + estimatedTime + "ms");
 
-
             if (getFileExtension(destFile.getName()).equals("db")) {
                 File dirPath = new File(getReactApplicationContext().getDataDir().getPath(), "/databases");
                 if (!dirPath.exists()) {
@@ -354,26 +442,25 @@ public class SmbModule extends ReactContextBaseJavaModule {
                 p(dest);
                 File fSource = new File(source);
                 fSource.renameTo(new File(dest));
-               // Files.move(Paths.get(source), Paths.get(dest));
+                // Files.move(Paths.get(source), Paths.get(dest));
             }
 
-        }
-        catch (MalformedURLException ex) {
+        } catch (MalformedURLException ex) {
             p(ex.getMessage());
         }
     }
 
-    private void copyFileFromServer(String filename, String ipAddress) throws IOException{
+    private void copyFileFromServer(String filename, String ipAddress) throws IOException {
         try {
             copyFileFromServer(filename, filename, ipAddress, "");
         } catch (IOException ex) {
-            throw  ex;
+            throw ex;
         }
     }
 
-
-    private void copyFileToServer(String filename, String destFilename, String ipAddress, String dataFilesDir, String smbDir, boolean prismAuth) throws IOException{
-        int bufLength = 61440;  // Windows SMB truncates data into chunks of 61440
+    private void copyFileToServer(String filename, String destFilename, String ipAddress, String dataFilesDir,
+            String smbDir, boolean prismAuth) throws IOException {
+        int bufLength = 61440; // Windows SMB truncates data into chunks of 61440
 
         long startTime = System.currentTimeMillis();
         p(smbDir);
@@ -385,11 +472,13 @@ public class SmbModule extends ReactContextBaseJavaModule {
             formattedFilename = formattedFilename.replace(".dat", timestamp + ".dat");
         }
 
-        try ( SmbFile destFile = new SmbFile(smbDir + formattedFilename, auth) ) {
+        try (SmbFile destFile = new SmbFile(smbDir + formattedFilename, auth)) {
             File sourceFile = new File(dataFilesDir, filename);
-
-            if (sourceFile.exists()) {
-                InputStream in = new FileInputStream(dataFilesDir + "/" +  filename);
+            long sourceModified = sourceFile.lastModified();
+            long destModified = destFile.lastModified();
+            if ((prismAuth && sourceFile.exists() && (destModified < sourceModified) && !destFile.exists())
+                    || (sourceFile.exists() && !prismAuth)) {
+                InputStream in = new FileInputStream(dataFilesDir + "/" + filename);
                 OutputStream out = destFile.openOutputStream(true);
 
                 p("Copying " + filename);
@@ -403,25 +492,24 @@ public class SmbModule extends ReactContextBaseJavaModule {
                 }
 
                 in.close();
+                out.flush();
                 out.close();
 
                 p("Finished copying.");
                 long estimatedTime = System.currentTimeMillis() - startTime;
                 p("Elapsed Time: " + estimatedTime + "ms");
                 Hamr.Logging.log("Finished copying. Estimated time: " + estimatedTime + "ms");
-            }
-            else {
+            } else {
                 p("File not found: " + dataFilesDir + "/" + filename);
                 Hamr.Logging.log("File not found: " + dataFilesDir + "/" + filename);
             }
 
-        }
-        catch (MalformedURLException ex) {
+        } catch (MalformedURLException ex) {
             p(ex.getMessage());
         }
     }
 
-    private CIFSContext getContext () throws CIFSException {
+    private CIFSContext getContext() throws CIFSException {
         return new BaseContext(new BaseConfiguration(true));
     }
 
@@ -439,4 +527,4 @@ public class SmbModule extends ReactContextBaseJavaModule {
 
         return extension;
     }
-}
+ }

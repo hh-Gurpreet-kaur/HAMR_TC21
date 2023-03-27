@@ -1,8 +1,11 @@
-import { AsyncStorage } from 'react-native'
+import { AsyncStorage } from '@react-native-async-storage/async-storage'
+//import { AsyncStorage } from '@react-native-community/async-storage'
+
+
 
 let Settings = {
     // Default setting values
-    showNumpad: false,
+    showNumpad: true,
     lastSync: '',
     timeoutEnabled: true,
     timeout: '10',
@@ -11,6 +14,7 @@ let Settings = {
     rememberMe: false,
     printerAddress: '',
     labelType: 'shelf',
+    printType: 'zebra',
     serverUsername: '',
     serverPassword: '',
     ipAddress: '',
@@ -20,7 +24,7 @@ let Settings = {
     prismUsername: "",
     prismPassword: "",
     prismServer: "",
-    guestAccess: false,
+    guestAccess: true,
 
     loadSettings: function() {
         this.getShowNumpad();
@@ -100,6 +104,13 @@ let Settings = {
 		}
     },
     
+    getPrinterType: async function() {
+      let printType =  await AsyncStorage.getItem("printType");
+      if ((printType!= null && printType != undefined)) {
+        this.printType = printType;
+      }
+      },
+
     getUsername: async function() {
 		let username = await AsyncStorage.getItem("serverUsername");
 		if ((username != null && username != undefined)) {
@@ -214,6 +225,15 @@ let Settings = {
       this.rememberMe = false
 		}
     },
+    removeUserCreds: async function() {
+      
+        await AsyncStorage.removeItem("rememberUser")
+        await AsyncStorage.removeItem("rememberPassword")
+        this.username = '',
+        this.password = '',
+        this.rememberMe = false
+      
+      },
     
     savePrinterAddress: async function(printerAddress) {
         this.printerAddress = printerAddress;
@@ -225,6 +245,11 @@ let Settings = {
         await AsyncStorage.setItem("labelType", labelType);
     },
 
+    savePrintType: async function(printType) {
+      this.printType = printType;
+      await AsyncStorage.setItem("printType", printType);
+  },
+  
     saveUsername: async function(username) {
         this.serverUsername = username;
 		await AsyncStorage.setItem("serverUsername", username)

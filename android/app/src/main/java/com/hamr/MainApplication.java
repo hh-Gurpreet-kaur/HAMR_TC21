@@ -28,6 +28,9 @@ import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import io.invertase.firebase.analytics.ReactNativeFirebaseAnalyticsPackage;
 import com.mkuczera.RNReactNativeHapticFeedbackPackage;
 import com.github.kevinejohn.keyevent.KeyEventPackage;
+import com.th3rdwave.safeareacontext.SafeAreaContextPackage;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
+import com.swmansion.reanimated.ReanimatedPackage;
 
 import org.pgsqlite.SQLitePluginPackage;
 
@@ -60,7 +63,11 @@ public class MainApplication extends Application implements ReactApplication {
               new ReactNativeFirebaseAnalyticsPackage(),
               new RNLocalResourcePackage(),
               new RNReactNativeHapticFeedbackPackage(),
-              new KeyEventPackage()
+              new KeyEventPackage(),
+            new SafeAreaContextPackage(),
+            new ReanimatedPackage(),
+            new AsyncStoragePackage()
+
       );
 
       // Add unimodules

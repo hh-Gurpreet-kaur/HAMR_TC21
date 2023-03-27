@@ -13,11 +13,11 @@ const EndOfTransmissionBlock     = "<ETB>";      // 17
 const Cancel                     = "<CAN>";      // 18
 const Escape                     = "<ESC>";      // 1B
 const RecordSeparator            = "<RS>";       // 1E
-const UnitSeparator              = "<US>";       // 1F
+const FieldSeparator              = "<US>";       // 1F
 
 const MaxLineLength = 18;
 const NewLine = '\n';
-
+const MaxnumLength = 7;
 class UpcLabel {
 
     /*static async PrintLabel(sku, printerAddress) {
@@ -27,7 +27,7 @@ class UpcLabel {
             ) });
         }
 
-		if (!(await Bluetooth.BluetoothEnabled())) {
+                if (!(await Bluetooth.BluetoothEnabled())) {
             return new Promise((resolve) => { resolve(
                 translate('bluetooth_disabled')
             ) });
@@ -98,6 +98,7 @@ class UpcLabel {
 
         // Item Number
         this.AddLine(this.GetRegularFormat(item.skuNum));
+      //this.AddLine(this.SplitSkuNum(item.skuNum));
 
         // Source code + hazard code placeholder
         this.AddLine(this.GetRegularFormat(''));
@@ -150,7 +151,15 @@ class UpcLabel {
 
         return splitPos;
     }
-
+    static SplitSkuNum(skuNum) {
+        if (MaxnumLength > skuNum.length) {
+            return `${StartOfText}${skuNum}${CarriageReturn}${EndOfText}`;
+                }
+            else {
+                return  StartOfText + skuNum.substring(0, 4)+ "-" + skuNum.substring(4, skuNum.length) +CarriageReturn + EndOfText; 
+            } 
+    
+        }
 
     static AddLine(line) {
         data += line + NewLine;
@@ -161,7 +170,7 @@ class UpcLabel {
     }
 
     static EndLabel() {
-        return `${StartOfText}${RecordSeparator}1${UnitSeparator}1${EndOfTransmissionBlock}${FormFeed}${EndOfText}`;
+        return `${StartOfText}${RecordSeparator}1${FieldSeparator}1${EndOfTransmissionBlock}${FormFeed}${EndOfText}`;
     }
 
     static GetRegularFormat(text) {
